@@ -32,7 +32,7 @@ def file_manager(http_request: HttpRequest):
         if not os.path.exists(base_path):
             os.makedirs(base_path)
         with open(file_path, 'wb') as f:
-            f.write(file_data)
+            f.write(base64.b64decode(file_data.encode()))
         return HttpResponse('ok'.encode())
     else:
         return HttpResponseBadRequest()
