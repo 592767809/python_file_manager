@@ -12,6 +12,6 @@ RUN python manage.py collectstatic --noinput
 RUN python manage.py makemigrations
 RUN python manage.py migrate
 # 导出端口
-EXPOSE 80
+EXPOSE 5780
 # 指定运行时的启动指令
-CMD python manage.py runserver 0.0.0.0:80
+CMD python manage.py runserver 0.0.0.0:5780
