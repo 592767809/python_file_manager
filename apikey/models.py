@@ -6,8 +6,7 @@ from django.db import models
 
 class ApiKey(models.Model):
 
-    name = models.CharField(max_length=32)
-    key_value = models.CharField(max_length=32)
+    key_value = models.CharField(max_length=32, primary_key=True)
 
     def __str__(self):
-        return self.name + ':' + self.key_value
+        return self.key_value
