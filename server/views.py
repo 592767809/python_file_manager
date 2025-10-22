@@ -1,7 +1,7 @@
 
 import os
 import json
-from apikey.models import ApiKey
+from django.conf import settings
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, FileResponse, HttpResponseForbidden, HttpResponseBadRequest
 
 
@@ -9,7 +9,7 @@ def file_manager(http_request: HttpRequest):
     key = http_request.headers.get('Key')
     if not key:
         return HttpResponseForbidden()
-    if not ApiKey.objects.filter(key_value=key):
+    if key != settings.SECRET_KEY:
         return HttpResponseForbidden()
     try:
         request_body = json.loads(http_request.body.decode())
