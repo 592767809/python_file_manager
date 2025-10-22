@@ -8,6 +8,6 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path('^file/.+', views.file_manager),
+    path('file', views.file_manager),
     re_path('^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
 ]

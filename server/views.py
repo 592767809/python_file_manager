@@ -1,8 +1,8 @@
 
 import os
-from urllib import parse
+import json
 from apikey.models import ApiKey
-from django.http import HttpRequest, HttpResponse, HttpResponseNotAllowed, HttpResponseNotFound, FileResponse, HttpResponseForbidden
+from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, FileResponse, HttpResponseForbidden, HttpResponseBadRequest
 
 
 def file_manager(http_request: HttpRequest):
@@ -11,23 +11,27 @@ def file_manager(http_request: HttpRequest):
         return HttpResponseForbidden()
     if not ApiKey.objects.filter(key_value=key):
         return HttpResponseForbidden()
-    file_path = http_request.get_full_path()[6:]
-    if '..' in file_path:
-        return HttpResponseNotFound()
+    try:
+        request_body = json.loads(http_request.body.decode())
+    except:
+        return HttpResponseBadRequest()
+    action = request_body.get('action')
+    file_path = request_body.get('file_path')
+    file_data = request_body.get('file_data')
+    if not action or not file_path:
+        return HttpResponseBadRequest()
     file_path = '/srv/' + file_path
     base_path = os.path.dirname(file_path)
-    file_name = parse.unquote(os.path.basename(file_path))
-    file_path = os.path.join(base_path, file_name)
-    if http_request.method == "GET":
+    if action == "GET":
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'))
         else:
             return HttpResponseNotFound()
-    elif http_request.method == "POST":
+    elif action == "POST":
         if not os.path.exists(base_path):
             os.makedirs(base_path)
         with open(file_path, 'wb') as f:
-            f.write(http_request.body)
+            f.write(file_data)
         return HttpResponse('ok'.encode())
     else:
-        return HttpResponseNotAllowed(['GET', 'POST'])
+        return HttpResponseBadRequest()
