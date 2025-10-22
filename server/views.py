@@ -1,6 +1,7 @@
 
 import os
 import json
+import base64
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, FileResponse, HttpResponseForbidden, HttpResponseBadRequest
 
